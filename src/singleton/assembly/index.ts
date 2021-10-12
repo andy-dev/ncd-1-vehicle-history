@@ -1,5 +1,7 @@
 import { storage, Context, PersistentMap } from "near-sdk-core";
-import { XCC_GAS, AccountId, asNEAR } from "../../utils";
+import { AccountId } from "../../utils";
+
+const STATE = "STATE";
 @nearBindgen
 class VehicleOwner {
   constructor(public vehicleOwner: AccountId, public dateAcquired: string) {}
@@ -8,9 +10,6 @@ class VehicleOwner {
 class VehicleService {
   constructor(public serviceDate: string, public serviceNotes: string) {}
 }
-
-const STATE = "STATE";
-
 @nearBindgen
 export class Contract {
   public vehicle: string = "Mini";
@@ -41,7 +40,16 @@ export class Contract {
     return `Vehicle Owners: ${currentVehicleOwners}`;
   }
 
-  // write the given value at the given key to account (contract) storage
+  getAllVehicleServiceHistory(): string {
+    // get contract STATE
+    const currentContractState = get_contract_state();
+    // get current vehicle history
+    const currentVehicleServiceHistory =
+      currentContractState.vehicleServiceHistory;
+
+    return `Vehicle Service History: ${currentVehicleServiceHistory}`;
+  }
+
   @mutateState()
   write(key: string, value: string): string {
     storage.set(key, value);
@@ -91,7 +99,7 @@ export function add_or_update_vehicle_owner(
   // set or update key val pairs
   currentVehicleOwners.set(vehicleOwner, newOrUpdatedVehicleOwner);
 
-  // set playersScore property
+  // set vehicleOwners property
   currentContractState.vehicleOwners = currentVehicleOwners;
 
   // save contract with new values
