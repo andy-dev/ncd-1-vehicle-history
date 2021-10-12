@@ -31,24 +31,26 @@ export class Contract {
     }
   }
 
-  getAllVehicleOwners(): string {
-    // get contract STATE
-    const currentContractState = get_contract_state();
-    // get current vehicle owners
-    const currentVehicleOwners = currentContractState.vehicleOwners;
+  // todo figure out how to read this properties
+  // getAllVehicleOwners(): string {
+  //   // get contract STATE
+  //   const currentContractState = get_contract_state();
+  //   // get current vehicle owners
+  //   const currentVehicleOwners = currentContractState.vehicleOwners;
 
-    return `Vehicle Owners: ${currentVehicleOwners}`;
-  }
+  //   return `Vehicle Owners: ${currentVehicleOwners}`;
+  // }
 
-  getAllVehicleServiceHistory(): string {
-    // get contract STATE
-    const currentContractState = get_contract_state();
-    // get current vehicle history
-    const currentVehicleServiceHistory =
-      currentContractState.vehicleServiceHistory;
+  // getAllVehicleServiceHistory(): string {
+  //   // this does not
+  //   // // get contract STATE
+  //   // const currentContractState = get_contract_state();
+  //   // // get current vehicle history
+  //   // const currentVehicleServiceHistory =
+  //   //   currentContractState.vehicleServiceHistory;
 
-    return `Vehicle Service History: ${currentVehicleServiceHistory}`;
-  }
+  //   // return `Vehicle Service History: ${currentVehicleServiceHistory}`;
+  // }
 
   @mutateState()
   write(key: string, value: string): string {
