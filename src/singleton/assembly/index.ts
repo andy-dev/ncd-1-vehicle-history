@@ -1,4 +1,10 @@
-import { storage, Context, PersistentMap } from "near-sdk-core";
+import {
+  storage,
+  Context,
+  PersistentMap,
+  PersistentUnorderedMap,
+  MapEntry,
+} from "near-sdk-core";
 import { AccountId } from "../../utils";
 
 const STATE = "STATE";
@@ -12,15 +18,18 @@ class VehicleService {
 }
 @nearBindgen
 export class Contract {
-  public vehicle: string = "Mini";
-  public vehicleServiceHistory: Array<VehicleService> = [];
+  public vehicle: string;
 
-  constructor(
-    public vehicleOwners: PersistentMap<
-      AccountId,
-      VehicleOwner
-    > = new PersistentMap<AccountId, VehicleOwner>("vo")
-  ) {}
+  public vehicleServiceHistory: Array<VehicleService>;
+  public vehicleOwners: PersistentMap<AccountId, VehicleOwner>;
+  public vehicleOwnersPmap: PersistentUnorderedMap<AccountId, VehicleOwner>;
+
+  constructor(public year:string = '2013') {
+    this.vehicle = "Mini", 
+    this.vehicleServiceHistory = [],
+    this.vehicleOwners = new PersistentMap<AccountId, VehicleOwner>("vo"),
+    this.vehicleOwnersPmap = new PersistentUnorderedMap<AccountId,VehicleOwner>("pma")
+  }
 
   // read the given key from account (contract) storage
   read(key: string): string {
@@ -36,6 +45,18 @@ export class Contract {
     const currentContractState = get_contract_state();
     // get current vehicle owners
     const currentVehicleOwners = currentContractState.vehicleOwners;
+
+    return currentVehicleOwners;
+  }
+
+  getAllVehicleOwnersPMap(): MapEntry<string, VehicleOwner>[] {
+    // get contract STATE
+    const currentContractState = get_contract_state();
+    // get current vehicle owners
+    const currentVehicleOwners = currentContractState.vehicleOwnersPmap.entries(
+      0,
+      currentContractState.vehicleOwnersPmap.length
+    );
 
     return currentVehicleOwners;
   }
@@ -60,6 +81,14 @@ export class Contract {
   @mutateState()
   addOrUpdateVehicleOwner(vehicleOwner: AccountId, dateAcquired: string): void {
     add_or_update_vehicle_owner(vehicleOwner, dateAcquired);
+  }
+
+  @mutateState()
+  addOrUpdateVehicleOwnerPMap(
+    vehicleOwner: AccountId,
+    dateAcquired: string
+  ): void {
+    add_or_update_vehicle_owner_pmap(vehicleOwner, dateAcquired);
   }
 
   @mutateState()
@@ -102,6 +131,29 @@ export function add_or_update_vehicle_owner(
 
   // set vehicleOwners property
   currentContractState.vehicleOwners = currentVehicleOwners;
+
+  // save contract with new values
+  resave_contract(currentContractState);
+}
+
+export function add_or_update_vehicle_owner_pmap(
+  vehicleOwner: AccountId,
+  dateAcquired: string
+): void {
+  // create a new VehicleOwner instance
+  const newOrUpdatedVehicleOwner = new VehicleOwner(vehicleOwner, dateAcquired);
+
+  // get contract STATE
+  const currentContractState = get_contract_state();
+
+  // get current vehicle owners
+  const currentVehicleOwners = currentContractState.vehicleOwnersPmap;
+
+  // set or update key val pairs
+  currentVehicleOwners.set(vehicleOwner, newOrUpdatedVehicleOwner);
+
+  // set vehicleOwners property
+  currentContractState.vehicleOwnersPmap = currentVehicleOwners;
 
   // save contract with new values
   resave_contract(currentContractState);
