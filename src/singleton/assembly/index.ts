@@ -31,26 +31,25 @@ export class Contract {
     }
   }
 
-  // todo figure out how to read this properties
-  // getAllVehicleOwners(): string {
-  //   // get contract STATE
-  //   const currentContractState = get_contract_state();
-  //   // get current vehicle owners
-  //   const currentVehicleOwners = currentContractState.vehicleOwners;
+  getAllVehicleOwners(): PersistentMap<AccountId, VehicleOwner> {
+    // get contract STATE
+    const currentContractState = get_contract_state();
+    // get current vehicle owners
+    const currentVehicleOwners = currentContractState.vehicleOwners;
 
-  //   return `Vehicle Owners: ${currentVehicleOwners}`;
-  // }
+    return currentVehicleOwners;
+  }
 
-  // getAllVehicleServiceHistory(): string {
-  //   // this does not
-  //   // // get contract STATE
-  //   // const currentContractState = get_contract_state();
-  //   // // get current vehicle history
-  //   // const currentVehicleServiceHistory =
-  //   //   currentContractState.vehicleServiceHistory;
+  getAllVehicleServiceHistory(): Array<VehicleService> {
+    // this does not
+    // get contract STATE
+    const currentContractState = get_contract_state();
+    // get current vehicle history
+    const currentVehicleServiceHistory =
+      currentContractState.vehicleServiceHistory;
 
-  //   // return `Vehicle Service History: ${currentVehicleServiceHistory}`;
-  // }
+    return currentVehicleServiceHistory;
+  }
 
   @mutateState()
   write(key: string, value: string): string {

@@ -29,8 +29,11 @@ echo ---------------------------------------------------------
 echo
 
 
-# near call $CONTRACT addOrUpdateVehicleOwner '{"vehicleOwner":"phoenixpulsar.testnet",  "dateAcquired": "Feb 1 2021"}' --accountId $CONTRACT
-near call $CONTRACT addService '{"serviceDate":"Feb 8 2021",  "serviceNotes": "Oil Change"}' --accountId $CONTRACT
+# near call $CONTRACT addOrUpdateVehicleOwner '{"vehicleOwner":"macedo.testnet",  "dateAcquired": "Feb 8 2021"}' --accountId $CONTRACT
+# near call $CONTRACT addService '{"serviceDate":"Feb 8 2021",  "serviceNotes": "Oil Change"}' --accountId $CONTRACT
+# near call $CONTRACT getAllVehicleServiceHistory '{}' --accountId $CONTRACT
+near call $CONTRACT getAllVehicleOwners '{}' --accountId $CONTRACT
+
 
 echo
 echo "now run this script again to see changes made by this file"
