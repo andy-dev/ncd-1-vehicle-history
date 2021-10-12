@@ -19,7 +19,7 @@ echo "Read State"
 echo ---------------------------------------------------------
 echo
 
-near view $CONTRACT read '{"key":"STATE"}'
+# near view $CONTRACT read '{"key":"STATE"}'
 
 echo
 echo
@@ -29,8 +29,8 @@ echo ---------------------------------------------------------
 echo
 
 
-# near call $CONTRACT addOrUpdateVehicleOwner '{"vehicleOwner":"phoenixpulsar.testnet",  "dateAcquired": "Jan 8 2021"}' --accountId $CONTRACT
-# near call $CONTRACT addVehicleService '{"serviceDate":"Jan 7 2021",  "serviceNotes": "Change Filter"}' --accountId $CONTRACT
+# near call $CONTRACT addOrUpdateVehicleOwner '{"vehicleOwner":"phoenixpulsar.testnet",  "dateAcquired": "Feb 1 2021"}' --accountId $CONTRACT
+near call $CONTRACT addService '{"serviceDate":"Feb 8 2021",  "serviceNotes": "Oil Change"}' --accountId $CONTRACT
 
 echo
 echo "now run this script again to see changes made by this file"

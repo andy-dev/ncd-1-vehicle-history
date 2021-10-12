@@ -4,6 +4,7 @@ import { XCC_GAS, AccountId, asNEAR } from "../../utils";
 class VehicleOwner {
   constructor(public vehicleOwner: AccountId, public dateAcquired: string) {}
 }
+@nearBindgen
 class VehicleService {
   constructor(public serviceDate: string, public serviceNotes: string) {}
 }
@@ -12,13 +13,14 @@ const STATE = "STATE";
 
 @nearBindgen
 export class Contract {
+  public vehicle: string = "Mini";
+  public vehicleServiceHistory: Array<VehicleService> = [];
+
   constructor(
-    public vehicle = "Mini",
     public vehicleOwners: PersistentMap<
       AccountId,
       VehicleOwner
-    > = new PersistentMap<AccountId, VehicleOwner>("vo"),
-    public vehicleServiceHistory: Array<VehicleService> = []
+    > = new PersistentMap<AccountId, VehicleOwner>("vo")
   ) {}
 
   // read the given key from account (contract) storage
@@ -28,6 +30,15 @@ export class Contract {
     } else {
       return `🚫 Key [ ${key} ] not found in storage. ( ${this.storageReport()} )`;
     }
+  }
+
+  getAllVehicleOwners(): string {
+    // get contract STATE
+    const currentContractState = get_contract_state();
+    // get current vehicle owners
+    const currentVehicleOwners = currentContractState.vehicleOwners;
+
+    return `Vehicle Owners: ${currentVehicleOwners}`;
   }
 
   // write the given value at the given key to account (contract) storage
@@ -43,7 +54,7 @@ export class Contract {
   }
 
   @mutateState()
-  addVehicleService(serviceDate: string, serviceNotes: string): void {
+  addService(serviceDate: string, serviceNotes: string): void {
     let serviceToAdd = new VehicleService(serviceDate, serviceNotes);
     this.vehicleServiceHistory.push(serviceToAdd);
   }
