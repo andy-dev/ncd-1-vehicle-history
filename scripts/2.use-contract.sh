@@ -30,10 +30,10 @@ echo
 
 
 # near call $CONTRACT addOrUpdateVehicleOwner '{"vehicleOwner":"macedo.testnet",  "dateAcquired": "Feb 8 2021"}' --accountId $CONTRACT
-# near call $CONTRACT addService '{"serviceDate":"Feb 8 2021",  "serviceNotes": "Oil Change"}' --accountId $CONTRACT
+near call $CONTRACT addService '{"serviceDate":"Feb 8 2021",  "serviceNotes": "Oil Change"}' --accountId $CONTRACT
 # near call $CONTRACT getAllVehicleServiceHistory '{}' --accountId $CONTRACT
 # near call $CONTRACT getAllVehicleOwners '{}' --accountId $CONTRACT
-near call $CONTRACT addOrUpdateVehicleOwnerTwo '{"vehicleOwner":"macedo.testnet",  "dateAcquired": "Feb 8 2021"}' --accountId $CONTRACT
+# near call $CONTRACT addOrUpdateVehicleOwnerTwo '{"vehicleOwner":"macedo.testnet",  "dateAcquired": "Feb 8 2021"}' --accountId $CONTRACT
 
 
 
