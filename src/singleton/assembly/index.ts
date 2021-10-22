@@ -32,10 +32,10 @@ class VehicleService {
 @nearBindgen
 export class Contract {
   
-  public vehicles: PersistentMap<AccountId, Vehicle>;
+  public vehicles: Array<Vehicle>;
 
   constructor(public contractName:string = 'Vehicle History') {
-    this.vehicles = new PersistentMap<AccountId, Vehicle>("vo")
+    this.vehicles = []
   }
 
   // read the given key from account (contract) storage
@@ -59,7 +59,11 @@ export class Contract {
     add_or_update_vehicle(year, make, model, owner, dateAcquired);
   }
 
-  
+  @mutateState()
+  addVehicleService(serviceDate: string, serviceNotes: string): void {
+    add_vehicle_service(serviceDate, serviceNotes);
+  }
+
   // private helper method used by read() and write() above
   private storageReport(): string {
     return `storage [ ${Context.storageUsage} bytes ]`;
@@ -93,9 +97,33 @@ export function add_or_update_vehicle(
   const currentVehicles = currentContractState.vehicles;
 
   // set or update key val pairs
-  currentVehicles.set(owner, newOrUpdatedVehicle);
+  currentVehicles.push(newOrUpdatedVehicle);
 
-  // set vehicles property
+  // set vehicles 
+  currentContractState.vehicles = currentVehicles;
+
+  // save contract with new values
+  resave_contract(currentContractState);
+}
+
+export function add_vehicle_service(
+  serviceDate: string, serviceNotes: string
+): void {
+  //  create a new VehicleService instance
+  // const newVehicleService = new VehicleService(serviceDate, serviceNotes);
+
+  // get contract STATE
+  const currentContractState = get_contract_state();
+
+  // get current vehicles
+  const currentVehicles = currentContractState.vehicles;
+
+  // add vehicle service to first vehicle
+  // currentVehicles[0].vehicleServiceHistory.push(newVehicleService)
+  currentVehicles[0].addService(serviceDate, serviceNotes)
+  // currentVehicles.set(owner, newOrUpdatedVehicle);
+
+  //  set vehicles property
   currentContractState.vehicles = currentVehicles;
 
   // save contract with new values
