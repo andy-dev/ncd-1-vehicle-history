@@ -9,13 +9,21 @@ const STATE = "STATE";
 
 @nearBindgen
 class Vehicle {
+  public vehicleServiceHistory: Array<VehicleService>
   constructor(
     public year:string,
     public make: string, 
     public model: string, 
     public owner: AccountId, 
     public dateAcquired: string, 
-    ) {}
+    ) {
+      this.vehicleServiceHistory = []
+    }
+    @mutateState()
+    addService(serviceDate: string, serviceNotes: string): void {
+      let serviceToAdd = new VehicleService(serviceDate, serviceNotes);
+      this.vehicleServiceHistory.push(serviceToAdd);
+    }
 }
 @nearBindgen
 class VehicleService {
@@ -23,11 +31,10 @@ class VehicleService {
 }
 @nearBindgen
 export class Contract {
-  public vehicleServiceHistory: Array<VehicleService>;
+  
   public vehicles: PersistentMap<AccountId, Vehicle>;
 
   constructor(public contractName:string = 'Vehicle History') {
-    this.vehicleServiceHistory = [],
     this.vehicles = new PersistentMap<AccountId, Vehicle>("vo")
   }
 
@@ -41,16 +48,6 @@ export class Contract {
   }
 
   
-  getAllVehicleServiceHistory(): Array<VehicleService> {
-    // get contract STATE
-    const currentContractState = get_contract_state();
-    
-    // get current vehicle history
-    const currentVehicleServiceHistory = currentContractState.vehicleServiceHistory;
-
-    return currentVehicleServiceHistory;
-  }
-
   @mutateState()
   write(key: string, value: string): string {
     storage.set(key, value);
@@ -63,12 +60,6 @@ export class Contract {
   }
 
   
-  @mutateState()
-  addService(serviceDate: string, serviceNotes: string): void {
-    let serviceToAdd = new VehicleService(serviceDate, serviceNotes);
-    this.vehicleServiceHistory.push(serviceToAdd);
-  }
-
   // private helper method used by read() and write() above
   private storageReport(): string {
     return `storage [ ${Context.storageUsage} bytes ]`;
