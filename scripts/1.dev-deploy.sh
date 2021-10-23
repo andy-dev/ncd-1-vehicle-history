@@ -40,7 +40,7 @@ echo
 echo ---------------------------------------------------------
 echo 'export CONTRACT=<dev-123-456>'
 # uncomment this line for a useful hint when using the singleton style
-# echo "near call \$CONTRACT init --accountId \$CONTRACT"
+echo "near call \$CONTRACT init --accountId \$CONTRACT"
 echo ---------------------------------------------------------
 echo
 

@@ -56,12 +56,41 @@ export class Contract {
 
   @mutateState()
   addOrUpdateVehicle(year:string, make: string,  model: string,  owner: AccountId, dateAcquired: string): void {
-    add_or_update_vehicle(year, make, model, owner, dateAcquired);
+    const newVehicle = new Vehicle(year, make, model, owner, dateAcquired);
+    this.vehicles.push(newVehicle)
+    // add_or_update_vehicle(year, make, model, owner, dateAcquired);
   }
 
   @mutateState()
+  clearVehicles(): void {
+    this.vehicles = []
+  }
+
+  @mutateState()
+  clearLastVehicles(): void {
+    this.vehicles[0].vehicleServiceHistory.splice(0, 1)
+  }
+
+ 
+  @mutateState()
+  clearLastVehicles2(): void {
+    this.vehicles[0].vehicleServiceHistory = this.vehicles[0].vehicleServiceHistory.slice(0, 1)
+  }
+
+  @mutateState()
+  clearChangeTwo(): void {
+   this.vehicles[0].vehicleServiceHistory = this.vehicles[0].vehicleServiceHistory.map<VehicleService>(function (item, i) {
+     if (i === 1) {
+       item = new VehicleService("changed", "changed");
+     }
+     return item;
+   })
+  }
+
+
+  @mutateState()
   addVehicleService(serviceDate: string, serviceNotes: string): void {
-    add_vehicle_service(serviceDate, serviceNotes);
+    this.vehicles[0].addService(serviceDate, serviceNotes)
   }
 
   // private helper method used by read() and write() above
