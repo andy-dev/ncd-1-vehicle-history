@@ -30,14 +30,14 @@ echo
 
 
 # near call $CONTRACT addOrUpdateVehicleOwner '{"vehicleOwner":"macedo.testnet",  "dateAcquired": "Feb 8 2021"}' --accountId $CONTRACT
-# near call $CONTRACT addOrUpdateVehicle '{"year":"Feb 8 2021",  "make": "Mini", "model": "BMW", "make": "Mini", "owner": "macedo.testnet", "dateAcquired": "Feb"}' --accountId $CONTRACT
+# near call $CONTRACT addVehicle '{"year":"Feb 8 2021",  "make": "Mini", "model": "BMW", "make": "Mini", "owner": "macedo.testnet", "dateAcquired": "Feb"}' --accountId $CONTRACT
 # near call $CONTRACT getAllVehicleServiceHistory '{}' --accountId $CONTRACT
 # near call $CONTRACT getAllVehicleOwners '{}' --accountId $CONTRACT
 # near call $CONTRACT addOrUpdateVehicleOwnerTwo '{"vehicleOwner":"macedo.testnet",  "dateAcquired": "Feb 8 2021"}' --accountId $CONTRACT
-# near call $CONTRACT addVehicleService '{"serviceDate":"Feb 8 2021",  "serviceNotes": "Oil Change"}' --accountId $CONTRACT
+# near call $CONTRACT addVehicleService '{"vehicleId":null, "serviceDate":"Feb 8 2021",  "serviceNotes": "Oil Change"}' --accountId $CONTRACT
 # near call $CONTRACT clearVehicles '{}' --accountId $CONTRACT
 # near call $CONTRACT clearLastVehicles2 '{}' --accountId $CONTRACT
-near call $CONTRACT clearChangeTwo '{}' --accountId $CONTRACT
+# near call $CONTRACT clearChangeTwo '{}' --accountId $CONTRACT
 
 
 

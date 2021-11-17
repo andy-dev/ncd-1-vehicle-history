@@ -77,6 +77,17 @@ export function toYocto(amount: number): u128 {
 }
 
 /**
+ * @function idCreator
+ * @return {string}
+ * Creates a unique id by combining sender + block height
+ */
+export function idCreator(): string {
+  let title = Context.sender.substring(0, Context.sender.lastIndexOf('.'))
+  let id = title + '-' + Context.blockIndex.toString()
+  return id
+}
+
+/**
  * Function to assert that the contract has called itself
  */
 export function assert_self(): void {
