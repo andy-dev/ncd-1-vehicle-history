@@ -38,15 +38,24 @@ echo
 # near call $CONTRACT clearChangeTwo '{}' --accountId $CONTRACT
 
 # Add First Vehicle --------------------
-near call $CONTRACT addVehicle '{"year":"Feb 8 2021",  "make": "Mini", "model": "BMW",  "owner": "macedo.testnet", "dateAcquired": "Nov 17, 2021", "vehicleNotes": "Brand New"}' --accountId $CONTRACT
+# near call $CONTRACT addVehicle '{"year":"Feb 8 2021",  "make": "Mini", "model": "BMW",  "owner": "macedo.testnet", "dateAcquired": "Nov 17, 2021", "vehicleNotes": "Brand New"}' --accountId $CONTRACT
 # Add Second Vehicle --------------------
 # near call $CONTRACT addVehicle '{"year":"Oct 8 2021",  "make": "230i", "model": "BMW", "owner": "macedo.testnet", "dateAcquired": "Nov 20, 2021", "vehicleNotes": "Brand New"}' --accountId $CONTRACT
 
 # Add Vehicle Service via ID--------------------
-# near call $CONTRACT addVehicleService '{"vehicleId":"dev-1637761874261-66447412538561-72598514", "serviceDate":"Feb 9 2021",  "serviceNotes": "Oil Change"}' --accountId $CONTRACT
+# near call $CONTRACT addService '{"vehicleId": "72750457", "serviceDate": "Feb 9 2021",  "serviceNotes": "Oil Change"}' --accountId $CONTRACT
 
+# test 1 
+near call $CONTRACT addServiceId '{"vehicleId": "72750457", "vehicleServiceId": "72750530"}' --accountId $CONTRACT
 
+# test 2 fail
+# near call $CONTRACT addServiceId '{"vehicleId": "v::72748314", "vehicleServiceId": "72748429"}' --accountId $CONTRACT
 
+# test 3 
+# near call $CONTRACT addServiceId2 '{"vehicleId": "72748314", "vehicleServiceId": "72748429"}' --accountId $CONTRACT
+
+# test 2 
+# near call $CONTRACT addServiceId '{"vehicleId": "v::72748314", "vehicleServiceId": "72748429"}' --accountId $CONTRACT
 
 echo
 echo "now run this script again to see changes made by this file"

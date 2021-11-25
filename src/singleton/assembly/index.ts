@@ -128,7 +128,7 @@
   // public vehicleServiceHistory: Array<VehicleService> = [];
 
 
-import { storage, PersistentMap } from "near-sdk-core";
+import { storage, PersistentMap, PersistentVector } from "near-sdk-core";
 import { AccountId, idCreator, VehicleId, VehicleServiceId } from "../../utils";
 
 const STATE = "STATE";
@@ -156,6 +156,7 @@ class VehicleService {
 class Vehicle {
   public id: VehicleId
   public serviceIDs: Array<VehicleServiceId> 
+  public services: PersistentVector<VehicleServiceId>
   public year:string
   public make:string 
   public model:string 
@@ -178,7 +179,8 @@ class Vehicle {
       this.owner = owner;
       this.dateAcquired = dateAcquired;
       this.vehicleNotes = vehicleNotes;
-      this.serviceIDs = []
+      this.serviceIDs = [];
+      this.services = new PersistentVector<VehicleServiceId>("s")
     }
 }
 
@@ -207,10 +209,69 @@ export class Contract {
     vehicleId:VehicleId,
     serviceDate:string, 
     serviceNotes:string
-    ): void {
-    add_service(vehicleId, serviceDate, serviceNotes)
+    ): void { 
+    let newVehicleService = new VehicleService(vehicleId, serviceDate, serviceNotes);
+    this.vehicleServiceHistory.set(newVehicleService.id, newVehicleService);
+  }
+
+  @mutateState()
+  addServiceWithServiceId(
+    vehicleId:VehicleId,
+    serviceDate:string, 
+    serviceNotes:string
+    ): void { 
+    let newVehicleService = new VehicleService(vehicleId, serviceDate, serviceNotes);
+    this.vehicleServiceHistory.set(newVehicleService.id, newVehicleService);
+    let currentVehicle = this.vehicles.get(vehicleId)
+    if(currentVehicle !== null){
+      currentVehicle.serviceIDs.push(newVehicleService.id)
+      this.vehicles.set(vehicleId, currentVehicle)
+    }
+  }
+
+  @mutateState()
+  addServiceWithServiceId2(
+    vehicleId:VehicleId,
+    serviceDate:string, 
+    serviceNotes:string
+    ): void { 
+    let newVehicleService = new VehicleService(vehicleId, serviceDate, serviceNotes);
+    this.vehicleServiceHistory.set(newVehicleService.id, newVehicleService);
+    let currentVehicle = this.vehicles.get(vehicleId)
+    if(currentVehicle !== null){
+      currentVehicle.services.push(newVehicleService.id)
+      this.vehicles.set(vehicleId, currentVehicle)
+    }
+  }
+
+  @mutateState()
+  addServiceId(
+    vehicleId:VehicleId,
+    vehicleServiceId:VehicleServiceId, 
+    ): void { 
+    
+    let currentVehicle = this.vehicles.get(vehicleId)
+    if(currentVehicle !== null){
+      currentVehicle.serviceIDs.push(vehicleServiceId)
+      this.vehicles.set(vehicleId, currentVehicle)
+    }
+  }
+
+  @mutateState()
+  addServiceId2(
+    vehicleId:VehicleId,
+    vehicleServiceId:VehicleServiceId, 
+    ): void { 
+    
+    let currentVehicle = this.vehicles.get(vehicleId)
+    if(currentVehicle !== null){
+      currentVehicle.services.push(vehicleServiceId)
+      this.vehicles.set(vehicleId, currentVehicle)
+    }
   }
 }
+
+// pruba con full id v::afaadf, prueba solo con id 
 
 export function add_vehicle(
   year:string, 
