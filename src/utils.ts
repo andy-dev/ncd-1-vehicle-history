@@ -8,15 +8,7 @@ import { u128, Context, ContractPromise } from "near-sdk-as";
  * Account IDs in NEAR are just strings.
  */
 export type AccountId = string;
-
-/**
- * 
- */
- export type VehicleId = string;
-
- /**
- * 
- */
+export type VehicleId = string;
 export type VehicleServiceId = string;
 
 /**
@@ -29,9 +21,7 @@ export type Gas = u64;
  */
 
 export type Amount = u128;
-
 export type Balance = Amount;
-
 export type Money = Amount;
 
 /**
