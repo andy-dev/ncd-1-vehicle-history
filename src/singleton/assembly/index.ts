@@ -1,101 +1,276 @@
-import {
-  storage,
-  Context,
-  PersistentMap,
-} from "near-sdk-core";
-import { AccountId, idCreator } from "../../utils";
-const STATE = "STATE";
+// import {
+//   storage,
+//   Context,
+//   logging,
+//   PersistentMap,
+//   PersistentVector
+// } from "near-sdk-core";
+// import { AccountId, idCreator } from "../../utils";
+// const STATE = "STATE";
 
-@nearBindgen
-class Vehicle {
-  public id: string
-  public vehicleServiceHistory: Array<VehicleService>
-  constructor(
-    public year:string,
-    public make: string, 
-    public model: string, 
-    public owner: AccountId, 
-    public dateAcquired: string, 
-    public vehicleNotes: string
-    ) {
-      this.id = idCreator()
-      this.vehicleServiceHistory = []
-    }
-    @mutateState()
-    addService(serviceDate: string, serviceNotes: string): void {
-      let serviceToAdd = new VehicleService(serviceDate, serviceNotes);
-      this.vehicleServiceHistory.push(serviceToAdd);
-    }
-}
+// @nearBindgen
+// class Vehicle {
+//   public id: string
+//   public vehicleServiceHistory: PersistentVector<VehicleService>
+//   constructor(
+//     public year:string,
+//     public make: string, 
+//     public model: string, 
+//     public owner: AccountId, 
+//     public dateAcquired: string, 
+//     public vehicleNotes: string
+//     ) {
+//       this.id = idCreator()
+//       // this.vehicleServiceHistory = []
+//       this.vehicleServiceHistory = new PersistentVector<VehicleService>("vs");
+//     }
+//     @mutateState()
+//     addService(serviceDate: string, serviceNotes: string): void {
+//       let serviceToAdd = new VehicleService(serviceDate, serviceNotes);
+//       this.vehicleServiceHistory.push(serviceToAdd);
+//     }
+// }
+// @nearBindgen
+// class VehicleService {
+//   public id: string
+//   constructor(public serviceDate: string, public serviceNotes: string) {
+//     this.id = idCreator()
+//   }
+// }
+// @nearBindgen
+// export class Contract {
+//   public vehicles: PersistentVector<Vehicle>;
+//   constructor(public contractName:string = 'Vehicle History') {
+//     this.vehicles = new PersistentVector<Vehicle>("v");
+//     // this.vehicles = []
+//   }
+
+//   @mutateState()
+//   addVehicle(
+//     year:string, 
+//     make: string,  
+//     model: string,  
+//     owner: AccountId, 
+//     dateAcquired: string, vehicleNotes: string): void {
+//     const newVehicle = new Vehicle(year, make, model, owner, dateAcquired, vehicleNotes);
+//     this.vehicles.push(newVehicle)
+//   }
+
+//   @mutateState()
+//   addVehicleService(
+//     vehicleId:string): void {
+//     // find vehicle call method on the vehicle we want to add service too
+//     // you can't update a service, if an error was made a new service has to be entered with notes
+//     for (let i = 0; i < this.vehicles.length; ++i) {
+//       if(this.vehicles[i].id === vehicleId){
+//         // this.vehicles[i].addService(serviceDate, serviceNotes)
+//         this.vehicles[i].make = "Miniiiisisisi"
+//         // let serviceToAdd = new VehicleService(serviceDate, serviceNotes);
+//         // logging.log("service to add:")
+//         // logging.log(serviceToAdd)
+//         // logging.log("vehicle history:")
+//         // logging.log(this.vehicles[i].vehicleServiceHistory)
+       
+//         // this.vehicles[i].vehicleServiceHistory.push(serviceToAdd)
+//         // logging.log("vehicle history after:")
+//         // logging.log(this.vehicles[i].vehicleServiceHistory)
+//       }
+    
+//     // NOTE: LIMITATIONS
+//     // this does not work, closures not supported on AS 
+//     // this.vehicles = this.vehicles.map<Vehicle>(function(vehicle){
+//     //   if(vehicle.id == vehicleId){
+//     //     vehicle.addService(serviceDate, serviceNotes)
+//     //   }
+//     //   return vehicle
+//     // })
+//     }
+//   }
+//   // read the given key from account (contract) storage
+//   read(key: string): string {
+//     if (isKeyInStorage(key)) {
+//       return `✅ Key [ ${key} ] has value [ ${storage.getString(key)!} ]`;
+//     } else {
+//       return `🚫 Key [ ${key} ] not found in storage. ( ${this.storageReport()} )`;
+//     }
+//   }
+ 
+//   @mutateState()
+//   write(key: string, value: string): string {
+//     storage.set(key, value);
+//     return `✅ Data saved. ( ${this.storageReport()} )`;
+//   }
+
+//   // private helper method used by read() and write() above
+//   private storageReport(): string {
+//     return `storage [ ${Context.storageUsage} bytes ]`;
+//   }
+// }
+
+// /**
+//  * This function exists only to avoid a compiler error
+//  *
+//  * @param key string key in account storage
+//  * @returns boolean indicating whether key exists
+//  */
+// function isKeyInStorage(key: string): bool {
+//   return storage.hasKey(key);
+// }
+
+
+// export function get_contract_state(): Contract {
+//   return storage.getSome<Contract>(STATE);
+// }
+
+// export function resave_contract(contract: Contract): void {
+  //   storage.set(STATE, contract);
+  // }
+  // public vehicleServiceHistory: Array<VehicleService> = [];
+
+
+import { storage, PersistentMap } from "near-sdk-core";
+import { AccountId, idCreator, VehicleId, VehicleServiceId } from "../../utils";
+
+const STATE = "STATE";
 @nearBindgen
 class VehicleService {
-  public id: string
-  constructor(public serviceDate: string, public serviceNotes: string) {
-    this.id = idCreator()
-  }
+  public id: VehicleServiceId
+  public vehicleId:VehicleId, 
+  public serviceDate:string, 
+  public serviceNotes:string
+  constructor(
+    vehicleId:VehicleId, 
+    serviceDate:string, 
+    serviceNotes:string
+    ) {
+      this.id = idCreator();
+      this.vehicleId = vehicleId;
+      this.serviceDate = serviceDate;
+      this.serviceNotes = serviceNotes;
+    }
 }
+class Vehicle {
+  public id: VehicleId
+  public serviceIDs: Array<VehicleServiceId> 
+  public year:string
+  public make:string 
+  public model:string 
+  public owner:AccountId
+  public dateAcquired:string
+  public vehicleNotes:string
+  
+  constructor(
+    year:string,
+    make:string, 
+    model:string, 
+    owner:AccountId,
+    dateAcquired:string,
+    vehicleNotes:string
+    ) {
+      this.id = idCreator();
+      this.year = year;
+      this.make = make;
+      this.model = model;
+      this.owner = owner;
+      this.dateAcquired = dateAcquired;
+      this.vehicleNotes = vehicleNotes;
+      this.serviceIDs = []
+    }
+}
+
 @nearBindgen
 export class Contract {
-  public vehicles: Array<Vehicle>;
-  constructor(public contractName:string = 'Vehicle History') {
-    this.vehicles = []
-  }
-  @mutateState()
-  addVehicle(year:string, make: string,  model: string,  owner: AccountId, dateAcquired: string, vehicleNotes: string): void {
-    const newVehicle = new Vehicle(year, make, model, owner, dateAcquired, vehicleNotes);
-    this.vehicles.push(newVehicle)
+  public vehicles: PersistentMap<VehicleId, Vehicle> 
+  public vehicleServiceHistory: PersistentMap<VehicleServiceId, VehicleService>
+  constructor(
+  ) {
+    this.vehicles = new PersistentMap<VehicleId, Vehicle>("v");
+    this.vehicleServiceHistory = new PersistentMap<VehicleServiceId, VehicleService>("vs");
   }
 
   @mutateState()
-  addVehicleService(vehicleId:string, serviceDate: string, serviceNotes: string): void {
-    // find vehicle call method on the vehicle we want to add service too
-    // you can't update a service, if an error was made a new service has to be entered with notes
-    for (let i = 0; i < this.vehicles.length; ++i) {
-      if(this.vehicles[i].id === vehicleId){
-        this.vehicles[i].addService(serviceNotes, serviceDate)
-      }
-    
-    // NOTE LIMITATIONS:
-    // this does not work, closures not supported on AS 
-    // this.vehicles = this.vehicles.map<Vehicle>(function(vehicle){
-    //   if(vehicle.id == vehicleId){
-    //     vehicle.addService(serviceDate, serviceNotes)
-    //   }
-    //   return vehicle
-    // })
-    }
-  }
-  // read the given key from account (contract) storage
-  read(key: string): string {
-    if (isKeyInStorage(key)) {
-      return `✅ Key [ ${key} ] has value [ ${storage.getString(key)!} ]`;
-    } else {
-      return `🚫 Key [ ${key} ] not found in storage. ( ${this.storageReport()} )`;
-    }
-  }
- 
-  @mutateState()
-  write(key: string, value: string): string {
-    storage.set(key, value);
-    return `✅ Data saved. ( ${this.storageReport()} )`;
+  addVehicle(
+    year:string, 
+    make:string,  
+    model:string,  
+    owner:AccountId, 
+    dateAcquired:string, 
+    vehicleNotes:string,
+    ): void {
+    add_vehicle(year,make, model, owner, dateAcquired, vehicleNotes);
   }
 
-  // private helper method used by read() and write() above
-  private storageReport(): string {
-    return `storage [ ${Context.storageUsage} bytes ]`;
+  @mutateState()
+  addService(
+    vehicleId:VehicleId,
+    serviceDate:string, 
+    serviceNotes:string
+    ): void {
+    add_service(vehicleId, serviceDate, serviceNotes)
   }
 }
 
-/**
- * This function exists only to avoid a compiler error
- *
- * @param key string key in account storage
- * @returns boolean indicating whether key exists
- */
-function isKeyInStorage(key: string): bool {
-  return storage.hasKey(key);
+export function add_vehicle(
+  year: string, 
+  make: string,  
+  model: string,  
+  owner: AccountId, 
+  dateAcquired: string, 
+  vehicleNotes: string
+): void {
+  // create a new Vehicle instance
+  const newVehicle = new Vehicle(year, make, model, owner, dateAcquired, vehicleNotes);
+
+  // get contract STATE
+  const currentContractState = get_contract_state();
+
+  // get current vehicles
+  const currentVehicles = currentContractState.vehicles;
+
+  // set or update key val pairs
+  currentVehicles.set(newVehicle.id, newVehicle);
+
+  // update vehicles
+  currentContractState.vehicles = currentVehicles;
+
+  // save contract with new values
+  resave_contract(currentContractState);
 }
 
+export function add_service(
+  vehicleId:VehicleId,
+  serviceDate:string, 
+  serviceNotes:string
+): void {
+  // create a new Vehicle instance
+  const newVehicleService = new VehicleService(vehicleId, serviceDate, serviceNotes);
+
+  // get contract STATE
+  const currentContractState = get_contract_state();
+
+  // get contracts vehicle service
+  const currentVehicleService = currentContractState.vehicleServiceHistory;
+
+  // get current vehicles
+  const currentVehicles = currentContractState.vehicles;
+
+  // get specific vehicle
+  const currentVehicle = currentVehicles.get(vehicleId)
+
+  // add service id to vehicle
+  if(currentVehicle !== null){
+    currentVehicle.serviceIDs.push(newVehicleService.id)
+  }
+  
+  // set or update key val pairs
+  currentVehicleService.set(newVehicleService.id, newVehicleService);
+
+  // update vehicles
+  currentContractState.vehicles = currentVehicles;
+
+  // save contract with new values
+  resave_contract(currentContractState);
+}
 
 export function get_contract_state(): Contract {
   return storage.getSome<Contract>(STATE);

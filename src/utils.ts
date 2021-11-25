@@ -10,6 +10,16 @@ import { u128, Context, ContractPromise } from "near-sdk-as";
 export type AccountId = string;
 
 /**
+ * 
+ */
+ export type VehicleId = string;
+
+ /**
+ * 
+ */
+export type VehicleServiceId = string;
+
+/**
  * Gas is u64
  */
 export type Gas = u64;
@@ -82,8 +92,11 @@ export function toYocto(amount: number): u128 {
  * Creates a unique id by combining sender + block height
  */
 export function idCreator(): string {
-  let title = Context.sender.substring(0, Context.sender.lastIndexOf('.'))
-  let id = title + '-' + Context.blockIndex.toString()
+  // let title = Context.sender.substring(0, Context.sender.lastIndexOf('.'))
+  // let title = Context.sender
+  // let id = title + '-' + Context.blockIndex.toString()
+  let id =  Context.blockIndex.toString()
+
   return id
 }
 
