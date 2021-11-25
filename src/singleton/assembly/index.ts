@@ -134,10 +134,12 @@ import { AccountId, idCreator, VehicleId, VehicleServiceId } from "../../utils";
 const STATE = "STATE";
 @nearBindgen
 class VehicleService {
+
   public id: VehicleServiceId
-  public vehicleId:VehicleId, 
-  public serviceDate:string, 
+  public vehicleId:VehicleId 
+  public serviceDate:string 
   public serviceNotes:string
+
   constructor(
     vehicleId:VehicleId, 
     serviceDate:string, 
@@ -146,9 +148,11 @@ class VehicleService {
       this.id = idCreator();
       this.vehicleId = vehicleId;
       this.serviceDate = serviceDate;
-      this.serviceNotes = serviceNotes;
+      this.serviceNotes = serviceNotes
     }
 }
+
+@nearBindgen
 class Vehicle {
   public id: VehicleId
   public serviceIDs: Array<VehicleServiceId> 
@@ -180,13 +184,10 @@ class Vehicle {
 
 @nearBindgen
 export class Contract {
-  public vehicles: PersistentMap<VehicleId, Vehicle> 
-  public vehicleServiceHistory: PersistentMap<VehicleServiceId, VehicleService>
   constructor(
-  ) {
-    this.vehicles = new PersistentMap<VehicleId, Vehicle>("v");
-    this.vehicleServiceHistory = new PersistentMap<VehicleServiceId, VehicleService>("vs");
-  }
+    public vehicles: PersistentMap<VehicleId, Vehicle> = new PersistentMap<VehicleId, Vehicle>("v"),
+    public vehicleServiceHistory: PersistentMap<VehicleServiceId, VehicleService> = new PersistentMap<VehicleServiceId, VehicleService>("vs"),
+  ) {}
 
   @mutateState()
   addVehicle(
@@ -197,7 +198,8 @@ export class Contract {
     dateAcquired:string, 
     vehicleNotes:string,
     ): void {
-    add_vehicle(year,make, model, owner, dateAcquired, vehicleNotes);
+    let newVehicle = new Vehicle(year,make, model, owner, dateAcquired, vehicleNotes);
+    this.vehicles.set(newVehicle.id, newVehicle);
   }
 
   @mutateState()
@@ -211,12 +213,12 @@ export class Contract {
 }
 
 export function add_vehicle(
-  year: string, 
-  make: string,  
-  model: string,  
-  owner: AccountId, 
-  dateAcquired: string, 
-  vehicleNotes: string
+  year:string, 
+  make:string,  
+  model:string,  
+  owner:AccountId, 
+  dateAcquired:string, 
+  vehicleNotes:string
 ): void {
   // create a new Vehicle instance
   const newVehicle = new Vehicle(year, make, model, owner, dateAcquired, vehicleNotes);
